@@ -1,0 +1,587 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030711">
+<title>A.L.E.X | Howard Core</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #030711;
+  --panel: #071426;
+  --blue: #00aaff;
+  --cyan: #38eaff;
+  --text: #e8f8ff;
+  --muted: #7796b3;
+  --glow: 0 0 14px #00aaff77, 0 0 34px #0088ff22;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at 50% 0%, #06345a 0%, transparent 48%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: max(20px, env(safe-area-inset-top))
+           18px max(24px, env(safe-area-inset-bottom));
+}
+
+button, input { font: inherit; }
+
+button {
+  color: var(--cyan);
+  background: #061b31;
+  border: 1px solid var(--blue);
+  border-radius: 12px;
+  padding: 15px 18px;
+  cursor: pointer;
+  box-shadow: var(--glow);
+  transition: background .18s, box-shadow .18s, transform .18s;
+  touch-action: manipulation;
+}
+
+button:hover, button:focus-visible {
+  background: #073c61;
+  box-shadow: 0 0 20px #00bfffbb, 0 0 42px #0088ff44;
+  outline: none;
+}
+
+button:active { transform: scale(.98); }
+
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+#app {
+  width: 100%;
+  max-width: 680px;
+  margin: auto;
+}
+
+header { text-align: center; margin-bottom: 30px; }
+
+.orb {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 16px;
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 20px #00bfff99, inset 0 0 20px #0088ff55;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -2px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(28px, 7vw, 42px);
+  letter-spacing: .22em;
+  color: var(--cyan);
+  text-shadow: 0 0 18px #00aaff88;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .23em;
+  margin-top: 9px;
+}
+
+.panel {
+  background: #06101fe8;
+  border: 1px solid #087ab966;
+  border-radius: 18px;
+  padding: clamp(18px, 5vw, 28px);
+  box-shadow: 0 0 35px #0077ff12;
+}
+
+h2 { font-size: 19px; margin: 0 0 7px; }
+
+.description {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.account-list { display: grid; gap: 11px; }
+
+.account {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  min-height: 72px;
+}
+
+.avatar {
+  flex: 0 0 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--cyan);
+  background: #052640;
+  color: white;
+  font-weight: 600;
+  box-shadow: inset 0 0 14px #00aaff22;
+}
+
+.account-info { flex: 1; min-width: 0; }
+.account-name { font-weight: 600; overflow-wrap: anywhere; }
+.account-detail { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.account-arrow { font-size: 22px; }
+
+.owner { border-color: var(--cyan); background: #08213a; }
+.guest { border-color: #23618a; box-shadow: none; }
+.add { border-style: dashed; justify-content: center; min-height: 58px; }
+.user { border-color: #24435d; box-shadow: none; }
+
+.divider {
+  border: 0;
+  border-top: 1px solid #16314a;
+  margin: 17px 0;
+}
+
+form { display: grid; gap: 14px; }
+
+label {
+  display: block;
+  color: #a9d9f3;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #12669a;
+  border-radius: 10px;
+  background: #020a14;
+  color: white;
+  outline: none;
+}
+
+input:focus { border-color: var(--cyan); box-shadow: var(--glow); }
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.secondary { border-color: #34516a; color: #a8c4d8; box-shadow: none; }
+
+.message {
+  min-height: 20px;
+  color: var(--cyan);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.message.error { color: #ff8b9a; }
+
+footer {
+  margin-top: 22px;
+  text-align: center;
+  color: #496a86;
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+
+.hidden { display: none !important; }
+
+@media (min-width: 760px) and (orientation: landscape) {
+  #app { max-width: 760px; }
+  header { margin-bottom: 20px; }
+  .orb { width: 60px; height: 60px; margin-bottom: 10px; }
+  .panel { padding: 22px 28px; }
+  .account-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .account { min-height: 68px; }
+  .add { grid-column: 1 / -1; }
+}
+
+@media (max-width: 380px) {
+  body { padding-left: 12px; padding-right: 12px; }
+  .panel { padding: 16px; }
+  .account { padding: 12px; }
+  .actions { grid-template-columns: 1fr 1.2fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+  <header>
+    <div class="orb">A<span style="color:#38eaff">.</span></div>
+    <h1>A.L.E.X</h1>
+    <div class="subtitle">HOWARD CORE · ACCESS SYSTEM</div>
+  </header>
+
+  <main class="panel">
+    <section id="home">
+      <h2>Select account</h2>
+      <p class="description">Choose an identity to access the A.L.E.X interface.</p>
+      <div id="accounts" class="account-list"></div>
+      <hr class="divider">
+      <div class="message" id="homeMessage" aria-live="polite"></div>
+    </section>
+
+    <section id="pinScreen" class="hidden">
+      <h2 id="pinTitle">Account access</h2>
+      <p class="description" id="pinDescription">Enter your PIN to continue.</p>
+      <form id="pinForm">
+        <div>
+          <label for="pinInput">Personal PIN</label>
+          <input id="pinInput" type="password" inputmode="numeric"
+            pattern="[0-9]*" maxlength="6" autocomplete="off"
+            placeholder="Enter PIN" required>
+        </div>
+        <div class="message" id="pinMessage" aria-live="polite"></div>
+        <div class="actions">
+          <button type="button" class="secondary" data-back>Back</button>
+          <button type="submit">Unlock</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="createGate" class="hidden">
+      <h2>Authorisation required</h2>
+      <p class="description">Enter the account creation code to register a new user.</p>
+      <form id="gateForm">
+        <div>
+          <label for="gateInput">Creation code</label>
+          <input id="gateInput" type="password" inputmode="numeric"
+            maxlength="12" autocomplete="off" required>
+        </div>
+        <div class="message" id="gateMessage" aria-live="polite"></div>
+        <div class="actions">
+          <button type="button" class="secondary" data-back>Back</button>
+          <button type="submit">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="registerScreen" class="hidden">
+      <h2>Create account</h2>
+      <p class="description">Choose a username and a 4–6 digit personal PIN. No password required.</p>
+      <form id="registerForm">
+        <div>
+          <label for="usernameInput">Username</label>
+          <input id="usernameInput" maxlength="30" minlength="2"
+            autocomplete="username" placeholder="Your username" required>
+        </div>
+        <div>
+          <label for="newPinInput">Personal PIN</label>
+          <input id="newPinInput" type="password" inputmode="numeric"
+            pattern="[0-9]{4,6}" minlength="4" maxlength="6"
+            autocomplete="new-password" placeholder="4–6 digits" required>
+        </div>
+        <div>
+          <label for="confirmPinInput">Confirm PIN</label>
+          <input id="confirmPinInput" type="password" inputmode="numeric"
+            pattern="[0-9]{4,6}" minlength="4" maxlength="6"
+            autocomplete="new-password" placeholder="Repeat PIN" required>
+        </div>
+        <div class="message" id="registerMessage" aria-live="polite"></div>
+        <div class="actions">
+          <button type="button" class="secondary" data-back>Cancel</button>
+          <button type="submit">Create account</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="welcomeScreen" class="hidden">
+      <h2 id="welcomeTitle">Access granted</h2>
+      <p class="description" id="welcomeDescription">Account selected.</p>
+      <div class="message">A.L.E.X account interface prototype</div>
+      <div class="actions">
+        <button type="button" class="secondary" id="signOut">Sign out</button>
+        <button type="button" id="continueButton">Continue</button>
+      </div>
+      <p class="description" id="demoNotice" style="margin-top:18px">
+        This screen is a placeholder until the AI interface is connected.
+      </p>
+    </section>
+  </main>
+
+  <footer>SECURE INTERFACE · HOWARD CORE</footer>
+</div>
+
+<script>
+"use strict";
+
+const OWNER_PIN = "112411";
+const CREATION_CODE = "1124";
+const STORAGE_KEY = "alex.accounts.prototype.v1";
+
+const builtInAccounts = [
+  { id: "owner", name: "Billy", type: "owner" },
+  { id: "user", name: "User", type: "user" }
+];
+
+let accounts = loadAccounts();
+let selectedAccount = null;
+
+const $ = id => document.getElementById(id);
+
+function loadAccounts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (Array.isArray(stored)) {
+      return stored.filter(a =>
+        a && typeof a.id === "string" &&
+        typeof a.name === "string" &&
+        typeof a.pin === "string" &&
+        a.type === "member"
+      );
+    }
+  } catch (_) {}
+  return [];
+}
+
+function saveAccounts() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function showScreen(id) {
+  ["home", "pinScreen", "createGate", "registerScreen", "welcomeScreen"]
+    .forEach(screen => $(screen).classList.toggle("hidden", screen !== id));
+
+  document.querySelectorAll(".message").forEach(el => {
+    el.textContent = "";
+    el.classList.remove("error");
+  });
+}
+
+function setMessage(id, text, error = false) {
+  const el = $(id);
+  el.textContent = text;
+  el.classList.toggle("error", error);
+}
+
+function escapeText(text) {
+  return String(text).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function renderAccounts() {
+  const root = $("accounts");
+  root.replaceChildren();
+
+  function addAccountButton(account, label, detail, cssClass) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `account ${cssClass}`;
+
+    const avatar = document.createElement("span");
+    avatar.className = "avatar";
+    avatar.textContent = account.name.slice(0, 1).toUpperCase();
+
+    const info = document.createElement("span");
+    info.className = "account-info";
+
+    const name = document.createElement("span");
+    name.className = "account-name";
+    name.textContent = account.name;
+
+    const sub = document.createElement("span");
+    sub.className = "account-detail";
+    sub.textContent = detail;
+
+    info.append(name, document.createElement("br"), sub);
+
+    const arrow = document.createElement("span");
+    arrow.className = "account-arrow";
+    arrow.textContent = "›";
+
+    button.append(avatar, info, arrow);
+    button.addEventListener("click", () => chooseAccount(account));
+    root.append(button);
+  }
+
+  addAccountButton(builtInAccounts[0], "Billy", "OWNER ACCESS", "owner");
+
+  accounts.forEach(account =>
+    addAccountButton(account, account.name, "PERSONAL ACCOUNT", "guest")
+  );
+
+  addAccountButton(builtInAccounts[1], "User", "GUEST ACCESS", "user");
+
+  const add = document.createElement("button");
+  add.type = "button";
+  add.className = "account add";
+  add.textContent = "+  Add new account";
+  add.addEventListener("click", () => {
+    $("gateInput").value = "";
+    showScreen("createGate");
+    $("gateInput").focus();
+  });
+  root.append(add);
+}
+
+function chooseAccount(account) {
+  selectedAccount = account;
+
+  if (account.type === "user") {
+    enterAccount(account);
+    return;
+  }
+
+  $("pinTitle").textContent = `Welcome, ${account.name}`;
+  $("pinDescription").textContent = "Enter your personal PIN to continue.";
+  $("pinInput").value = "";
+  showScreen("pinScreen");
+  $("pinInput").focus();
+}
+
+function enterAccount(account) {
+  $("welcomeTitle").textContent = `Welcome, ${account.name}`;
+  $("welcomeDescription").textContent =
+    account.type === "owner"
+      ? "Owner account selected."
+      : account.type === "user"
+        ? "Guest access selected."
+        : "Personal account selected.";
+
+  $("demoNotice").textContent =
+    "The real A.L.E.X assistant and server-side account system have not been connected yet.";
+
+  showScreen("welcomeScreen");
+}
+
+$("pinForm").addEventListener("submit", event => {
+  event.preventDefault();
+  if (!selectedAccount) return;
+
+  const pin = $("pinInput").value;
+  const valid = selectedAccount.type === "owner"
+    ? pin === OWNER_PIN
+    : selectedAccount.type === "member" && pin === selectedAccount.pin;
+
+  if (!valid) {
+    setMessage("pinMessage", "Incorrect PIN. Try again.", true);
+    $("pinInput").select();
+    return;
+  }
+
+  enterAccount(selectedAccount);
+});
+
+$("gateForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  if ($("gateInput").value !== CREATION_CODE) {
+    setMessage("gateMessage", "Invalid creation code.", true);
+    $("gateInput").select();
+    return;
+  }
+
+  $("registerForm").reset();
+  showScreen("registerScreen");
+  $("usernameInput").focus();
+});
+
+$("registerForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = $("usernameInput").value.trim();
+  const pin = $("newPinInput").value;
+  const confirmation = $("confirmPinInput").value;
+
+  if (name.length < 2) {
+    setMessage("registerMessage", "Username must have at least 2 characters.", true);
+    return;
+  }
+
+  if (/^(billy|user)$/i.test(name)) {
+    setMessage("registerMessage", "That username is reserved.", true);
+    return;
+  }
+
+  if (accounts.some(a => a.name.toLowerCase() === name.toLowerCase())) {
+    setMessage("registerMessage", "That username already exists.", true);
+    return;
+  }
+
+  if (!/^[0-9]{4,6}$/.test(pin)) {
+    setMessage("registerMessage", "PIN must contain 4–6 digits.", true);
+    return;
+  }
+
+  if (pin !== confirmation) {
+    setMessage("registerMessage", "The PINs do not match.", true);
+    return;
+  }
+
+  const account = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    name,
+    pin,
+    type: "member"
+  };
+
+  accounts.push(account);
+
+  if (!saveAccounts()) {
+    accounts.pop();
+    setMessage("registerMessage", "Browser storage is unavailable.", true);
+    return;
+  }
+
+  renderAccounts();
+  enterAccount(account);
+});
+
+document.querySelectorAll("[data-back]").forEach(button => {
+  button.addEventListener("click", () => {
+    selectedAccount = null;
+    showScreen("home");
+  });
+});
+
+$("signOut").addEventListener("click", () => {
+  selectedAccount = null;
+  $("pinInput").value = "";
+  renderAccounts();
+  showScreen("home");
+});
+
+$("continueButton").addEventListener("click", () => {
+  setMessage("demoNotice", "The AI chat interface will be added in the next stage.");
+});
+
+renderAccounts();
+showScreen("home");
+</script>
+</body>
+</html>
