@@ -1,587 +1,369 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#030711">
-<title>A.L.E.X | Howard Core</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030711">
+  <title>A.L.E.X — Howard Core</title>
 
-<style>
-:root {
-  color-scheme: dark;
-  --bg: #030711;
-  --panel: #071426;
-  --blue: #00aaff;
-  --cyan: #38eaff;
-  --text: #e8f8ff;
-  --muted: #7796b3;
-  --glow: 0 0 14px #00aaff77, 0 0 34px #0088ff22;
-}
+  <style>
+    :root {
+      --bg: #030711;
+      --panel: #06101f;
+      --blue: #008cff;
+      --cyan: #38eaff;
+      --text: #e8f8ff;
+    }
 
-* { box-sizing: border-box; }
+    * { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  min-height: 100dvh;
-  background:
-    radial-gradient(ellipse at 50% 0%, #06345a 0%, transparent 48%),
-    var(--bg);
-  color: var(--text);
-  font-family: "Segoe UI", system-ui, sans-serif;
-  display: flex;
-  justify-content: center;
-  padding: max(20px, env(safe-area-inset-top))
-           18px max(24px, env(safe-area-inset-bottom));
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 24px 16px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at 50% 8%, #07345a 0%, transparent 52%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
 
-button, input { font: inherit; }
+    main {
+      width: min(100%, 640px);
+      padding: clamp(24px, 5vw, 40px);
+      border: 1px solid #087ab9;
+      border-radius: 22px;
+      background: #06101fee;
+      box-shadow: 0 0 40px #0088ff20;
+    }
 
-button {
-  color: var(--cyan);
-  background: #061b31;
-  border: 1px solid var(--blue);
-  border-radius: 12px;
-  padding: 15px 18px;
-  cursor: pointer;
-  box-shadow: var(--glow);
-  transition: background .18s, box-shadow .18s, transform .18s;
-  touch-action: manipulation;
-}
+    header {
+      text-align: center;
+      margin-bottom: 38px;
+    }
 
-button:hover, button:focus-visible {
-  background: #073c61;
-  box-shadow: 0 0 20px #00bfffbb, 0 0 42px #0088ff44;
-  outline: none;
-}
+    /* Holographic A.L.E.X orb */
 
-button:active { transform: scale(.98); }
+    .orb-wrap {
+      position: relative;
+      width: 166px;
+      height: 166px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+    }
 
-button:focus-visible, input:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 3px;
-}
+    .orb {
+      position: relative;
+      z-index: 2;
+      width: 100px;
+      height: 100px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #75f5ff;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 28%, #43dfff38, transparent 35%),
+        radial-gradient(circle, #0a3e68 0%, #06172d 62%, #020713 100%);
+      color: #d6fbff;
+      font-size: 43px;
+      font-weight: 300;
+      text-shadow: 0 0 12px #00cfff, 0 0 26px #008cff;
+      box-shadow:
+        0 0 14px #00bfff99,
+        0 0 34px #007bff44,
+        inset 0 0 20px #00aaff44;
+      animation: corePulse 4s ease-in-out infinite;
+    }
 
-button:disabled { opacity: .45; cursor: not-allowed; }
+    .ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
 
-#app {
-  width: 100%;
-  max-width: 680px;
-  margin: auto;
-}
+    .ring-one {
+      width: 126px;
+      height: 126px;
+      border: 2px solid transparent;
+      border-top-color: #47f4ff;
+      border-right-color: #008cff;
+      border-bottom-color: #0877c9;
+      filter: drop-shadow(0 0 5px #00bfff);
+      animation: rotateClockwise 12s linear infinite;
+    }
 
-header { text-align: center; margin-bottom: 30px; }
+    .ring-two {
+      width: 145px;
+      height: 145px;
+      border: 1px solid transparent;
+      border-left-color: #13baff;
+      border-bottom-color: #1be8ff;
+      opacity: .9;
+      animation: rotateCounter 16s linear infinite;
+    }
 
-.orb {
-  width: 76px;
-  height: 76px;
-  margin: 0 auto 16px;
-  border: 2px solid var(--cyan);
-  border-radius: 50%;
-  box-shadow: 0 0 20px #00bfff99, inset 0 0 20px #0088ff55;
-  display: grid;
-  place-items: center;
-  color: white;
-  font-size: 28px;
-  font-weight: 300;
-  letter-spacing: -2px;
-}
+    .ring-three {
+      width: 160px;
+      height: 160px;
+      border: 1px dashed #168fd6;
+      opacity: .65;
+      animation: rotateClockwise 35s linear infinite;
+    }
 
-h1 {
-  margin: 0;
-  font-size: clamp(28px, 7vw, 42px);
-  letter-spacing: .22em;
-  color: var(--cyan);
-  text-shadow: 0 0 18px #00aaff88;
-}
+    .ring-four {
+      width: 116px;
+      height: 116px;
+      border: 1px solid #3beaff55;
+      box-shadow: 0 0 12px #00bfff22;
+    }
 
-.subtitle {
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: .23em;
-  margin-top: 9px;
-}
+    .orbit-dot {
+      position: absolute;
+      z-index: 3;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #a8fbff;
+      box-shadow: 0 0 8px #00dfff, 0 0 17px #008cff;
+    }
 
-.panel {
-  background: #06101fe8;
-  border: 1px solid #087ab966;
-  border-radius: 18px;
-  padding: clamp(18px, 5vw, 28px);
-  box-shadow: 0 0 35px #0077ff12;
-}
+    .dot-one {
+      top: 17px;
+      left: 40px;
+    }
 
-h2 { font-size: 19px; margin: 0 0 7px; }
+    .dot-two {
+      right: 12px;
+      bottom: 48px;
+      width: 5px;
+      height: 5px;
+    }
 
-.description {
-  margin: 0 0 22px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
+    .dot-three {
+      left: 24px;
+      bottom: 35px;
+      width: 4px;
+      height: 4px;
+    }
 
-.account-list { display: grid; gap: 11px; }
+    h1 {
+      margin: 0;
+      color: var(--cyan);
+      letter-spacing: .22em;
+      font-size: clamp(30px, 7vw, 43px);
+      text-shadow: 0 0 18px #00aaff77;
+    }
 
-.account {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  text-align: left;
-  min-height: 72px;
-}
+    .subtitle {
+      margin-top: 10px;
+      color: #7796b3;
+      font-size: 11px;
+      letter-spacing: .22em;
+    }
 
-.avatar {
-  flex: 0 0 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--cyan);
-  background: #052640;
-  color: white;
-  font-weight: 600;
-  box-shadow: inset 0 0 14px #00aaff22;
-}
+    .status {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 17px;
+      color: #70b6d6;
+      font-size: 10px;
+      letter-spacing: .16em;
+    }
 
-.account-info { flex: 1; min-width: 0; }
-.account-name { font-weight: 600; overflow-wrap: anywhere; }
-.account-detail { color: var(--muted); font-size: 12px; margin-top: 4px; }
-.account-arrow { font-size: 22px; }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38eaff;
+      box-shadow: 0 0 8px #00cfff;
+    }
 
-.owner { border-color: var(--cyan); background: #08213a; }
-.guest { border-color: #23618a; box-shadow: none; }
-.add { border-style: dashed; justify-content: center; min-height: 58px; }
-.user { border-color: #24435d; box-shadow: none; }
+    h2 {
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
 
-.divider {
-  border: 0;
-  border-top: 1px solid #16314a;
-  margin: 17px 0;
-}
+    .hint {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #91abc3;
+      font-size: 14px;
+    }
 
-form { display: grid; gap: 14px; }
+    #accounts {
+      display: grid;
+      gap: 12px;
+    }
 
-label {
-  display: block;
-  color: #a9d9f3;
-  font-size: 13px;
-  margin-bottom: 7px;
-}
+    button {
+      width: 100%;
+      min-height: 62px;
+      padding: 14px 18px;
+      border: 1px solid var(--blue);
+      border-radius: 12px;
+      background: #061b31;
+      color: var(--cyan);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 0 14px #00aaff22;
+      touch-action: manipulation;
+      transition: background .2s, box-shadow .2s;
+    }
 
-input {
-  width: 100%;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid #12669a;
-  border-radius: 10px;
-  background: #020a14;
-  color: white;
-  outline: none;
-}
+    button:hover,
+    button:focus-visible {
+      background: #073c61;
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+      box-shadow: 0 0 20px #00aaff44;
+    }
 
-input:focus { border-color: var(--cyan); box-shadow: var(--glow); }
+    .owner {
+      background: #08213a;
+    }
 
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 10px;
-  margin-top: 6px;
-}
+    .guest {
+      border-color: #23618a;
+    }
 
-.secondary { border-color: #34516a; color: #a8c4d8; box-shadow: none; }
+    .add {
+      border-style: dashed;
+      text-align: center;
+    }
 
-.message {
-  min-height: 20px;
-  color: var(--cyan);
-  font-size: 13px;
-  line-height: 1.5;
-}
+    #message {
+      min-height: 24px;
+      margin-top: 16px;
+      color: var(--cyan);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
 
-.message.error { color: #ff8b9a; }
+    footer {
+      margin-top: 26px;
+      padding-top: 16px;
+      border-top: 1px solid #153047;
+      color: #58758f;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: .12em;
+    }
 
-footer {
-  margin-top: 22px;
-  text-align: center;
-  color: #496a86;
-  font-size: 10px;
-  letter-spacing: .12em;
-}
+    @keyframes rotateClockwise {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
 
-.hidden { display: none !important; }
+    @keyframes rotateCounter {
+      to { transform: translate(-50%, -50%) rotate(-360deg); }
+    }
 
-@media (min-width: 760px) and (orientation: landscape) {
-  #app { max-width: 760px; }
-  header { margin-bottom: 20px; }
-  .orb { width: 60px; height: 60px; margin-bottom: 10px; }
-  .panel { padding: 22px 28px; }
-  .account-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .account { min-height: 68px; }
-  .add { grid-column: 1 / -1; }
-}
+    @keyframes corePulse {
+      0%, 100% {
+        box-shadow: 0 0 14px #00bfff77,
+                    0 0 30px #007bff33,
+                    inset 0 0 18px #00aaff33;
+      }
+      50% {
+        box-shadow: 0 0 24px #00dfffaa,
+                    0 0 48px #007bff55,
+                    inset 0 0 26px #00aaff66;
+      }
+    }
 
-@media (max-width: 380px) {
-  body { padding-left: 12px; padding-right: 12px; }
-  .panel { padding: 16px; }
-  .account { padding: 12px; }
-  .actions { grid-template-columns: 1fr 1.2fr; }
-}
+    @media (min-width: 700px) and (orientation: landscape) {
+      #accounts {
+        grid-template-columns: 1fr 1fr;
+      }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; }
-}
-</style>
+      .add {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ring,
+      .orb {
+        animation: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div id="app">
-  <header>
-    <div class="orb">A<span style="color:#38eaff">.</span></div>
-    <h1>A.L.E.X</h1>
-    <div class="subtitle">HOWARD CORE · ACCESS SYSTEM</div>
-  </header>
+  <main>
+    <header>
+      <div class="orb-wrap" aria-label="A.L.E.X holographic orb">
+        <div class="ring ring-three"></div>
+        <div class="ring ring-two"></div>
+        <div class="ring ring-one"></div>
+        <div class="ring ring-four"></div>
+        <div class="orb">A</div>
+        <span class="orbit-dot dot-one"></span>
+        <span class="orbit-dot dot-two"></span>
+        <span class="orbit-dot dot-three"></span>
+      </div>
 
-  <main class="panel">
+      <h1>A.L.E.X</h1>
+      <div class="subtitle">HOWARD CORE · ACCESS SYSTEM</div>
+
+      <div class="status">
+        <span class="status-dot"></span>
+        INTERFACE ONLINE
+      </div>
+    </header>
+
     <section id="home">
       <h2>Select account</h2>
-      <p class="description">Choose an identity to access the A.L.E.X interface.</p>
-      <div id="accounts" class="account-list"></div>
-      <hr class="divider">
-      <div class="message" id="homeMessage" aria-live="polite"></div>
+      <p class="hint">Choose an identity to continue.</p>
+      <div id="accounts"></div>
+      <div id="message" role="status" aria-live="polite"></div>
     </section>
 
-    <section id="pinScreen" class="hidden">
-      <h2 id="pinTitle">Account access</h2>
-      <p class="description" id="pinDescription">Enter your PIN to continue.</p>
-      <form id="pinForm">
-        <div>
-          <label for="pinInput">Personal PIN</label>
-          <input id="pinInput" type="password" inputmode="numeric"
-            pattern="[0-9]*" maxlength="6" autocomplete="off"
-            placeholder="Enter PIN" required>
-        </div>
-        <div class="message" id="pinMessage" aria-live="polite"></div>
-        <div class="actions">
-          <button type="button" class="secondary" data-back>Back</button>
-          <button type="submit">Unlock</button>
-        </div>
-      </form>
-    </section>
-
-    <section id="createGate" class="hidden">
-      <h2>Authorisation required</h2>
-      <p class="description">Enter the account creation code to register a new user.</p>
-      <form id="gateForm">
-        <div>
-          <label for="gateInput">Creation code</label>
-          <input id="gateInput" type="password" inputmode="numeric"
-            maxlength="12" autocomplete="off" required>
-        </div>
-        <div class="message" id="gateMessage" aria-live="polite"></div>
-        <div class="actions">
-          <button type="button" class="secondary" data-back>Back</button>
-          <button type="submit">Continue</button>
-        </div>
-      </form>
-    </section>
-
-    <section id="registerScreen" class="hidden">
-      <h2>Create account</h2>
-      <p class="description">Choose a username and a 4–6 digit personal PIN. No password required.</p>
-      <form id="registerForm">
-        <div>
-          <label for="usernameInput">Username</label>
-          <input id="usernameInput" maxlength="30" minlength="2"
-            autocomplete="username" placeholder="Your username" required>
-        </div>
-        <div>
-          <label for="newPinInput">Personal PIN</label>
-          <input id="newPinInput" type="password" inputmode="numeric"
-            pattern="[0-9]{4,6}" minlength="4" maxlength="6"
-            autocomplete="new-password" placeholder="4–6 digits" required>
-        </div>
-        <div>
-          <label for="confirmPinInput">Confirm PIN</label>
-          <input id="confirmPinInput" type="password" inputmode="numeric"
-            pattern="[0-9]{4,6}" minlength="4" maxlength="6"
-            autocomplete="new-password" placeholder="Repeat PIN" required>
-        </div>
-        <div class="message" id="registerMessage" aria-live="polite"></div>
-        <div class="actions">
-          <button type="button" class="secondary" data-back>Cancel</button>
-          <button type="submit">Create account</button>
-        </div>
-      </form>
-    </section>
-
-    <section id="welcomeScreen" class="hidden">
-      <h2 id="welcomeTitle">Access granted</h2>
-      <p class="description" id="welcomeDescription">Account selected.</p>
-      <div class="message">A.L.E.X account interface prototype</div>
-      <div class="actions">
-        <button type="button" class="secondary" id="signOut">Sign out</button>
-        <button type="button" id="continueButton">Continue</button>
-      </div>
-      <p class="description" id="demoNotice" style="margin-top:18px">
-        This screen is a placeholder until the AI interface is connected.
-      </p>
-    </section>
+    <footer>
+      HOWARD CORE · PERSONAL ASSISTANT INTERFACE
+    </footer>
   </main>
 
-  <footer>SECURE INTERFACE · HOWARD CORE</footer>
-</div>
+  <script>
+    const accounts = [];
 
-<script>
-"use strict";
-
-const OWNER_PIN = "112411";
-const CREATION_CODE = "1124";
-const STORAGE_KEY = "alex.accounts.prototype.v1";
-
-const builtInAccounts = [
-  { id: "owner", name: "Billy", type: "owner" },
-  { id: "user", name: "User", type: "user" }
-];
-
-let accounts = loadAccounts();
-let selectedAccount = null;
-
-const $ = id => document.getElementById(id);
-
-function loadAccounts() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (Array.isArray(stored)) {
-      return stored.filter(a =>
-        a && typeof a.id === "string" &&
-        typeof a.name === "string" &&
-        typeof a.pin === "string" &&
-        a.type === "member"
-      );
+    function addAccount(name, detail, type) {
+      const button = document.createElement("button");
+      button.className = type;
+      button.textContent = name + " — " + detail;
+      button.addEventListener("click", () => selectAccount(name, type));
+      document.getElementById("accounts").appendChild(button);
     }
-  } catch (_) {}
-  return [];
-}
 
-function saveAccounts() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts));
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+    function selectAccount(name, type) {
+      const message = document.getElementById("message");
 
-function showScreen(id) {
-  ["home", "pinScreen", "createGate", "registerScreen", "welcomeScreen"]
-    .forEach(screen => $(screen).classList.toggle("hidden", screen !== id));
+      if (type === "add") {
+        message.textContent = "Account registration will be added next.";
+      } else if (type === "owner") {
+        message.textContent = "Billy selected. Secure PIN login will be added next.";
+      } else if (type === "user") {
+        message.textContent = "Guest account selected.";
+      } else {
+        message.textContent = name + " selected.";
+      }
+    }
 
-  document.querySelectorAll(".message").forEach(el => {
-    el.textContent = "";
-    el.classList.remove("error");
-  });
-}
-
-function setMessage(id, text, error = false) {
-  const el = $(id);
-  el.textContent = text;
-  el.classList.toggle("error", error);
-}
-
-function escapeText(text) {
-  return String(text).replace(/[&<>"']/g, ch => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
-  })[ch]);
-}
-
-function renderAccounts() {
-  const root = $("accounts");
-  root.replaceChildren();
-
-  function addAccountButton(account, label, detail, cssClass) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `account ${cssClass}`;
-
-    const avatar = document.createElement("span");
-    avatar.className = "avatar";
-    avatar.textContent = account.name.slice(0, 1).toUpperCase();
-
-    const info = document.createElement("span");
-    info.className = "account-info";
-
-    const name = document.createElement("span");
-    name.className = "account-name";
-    name.textContent = account.name;
-
-    const sub = document.createElement("span");
-    sub.className = "account-detail";
-    sub.textContent = detail;
-
-    info.append(name, document.createElement("br"), sub);
-
-    const arrow = document.createElement("span");
-    arrow.className = "account-arrow";
-    arrow.textContent = "›";
-
-    button.append(avatar, info, arrow);
-    button.addEventListener("click", () => chooseAccount(account));
-    root.append(button);
-  }
-
-  addAccountButton(builtInAccounts[0], "Billy", "OWNER ACCESS", "owner");
-
-  accounts.forEach(account =>
-    addAccountButton(account, account.name, "PERSONAL ACCOUNT", "guest")
-  );
-
-  addAccountButton(builtInAccounts[1], "User", "GUEST ACCESS", "user");
-
-  const add = document.createElement("button");
-  add.type = "button";
-  add.className = "account add";
-  add.textContent = "+  Add new account";
-  add.addEventListener("click", () => {
-    $("gateInput").value = "";
-    showScreen("createGate");
-    $("gateInput").focus();
-  });
-  root.append(add);
-}
-
-function chooseAccount(account) {
-  selectedAccount = account;
-
-  if (account.type === "user") {
-    enterAccount(account);
-    return;
-  }
-
-  $("pinTitle").textContent = `Welcome, ${account.name}`;
-  $("pinDescription").textContent = "Enter your personal PIN to continue.";
-  $("pinInput").value = "";
-  showScreen("pinScreen");
-  $("pinInput").focus();
-}
-
-function enterAccount(account) {
-  $("welcomeTitle").textContent = `Welcome, ${account.name}`;
-  $("welcomeDescription").textContent =
-    account.type === "owner"
-      ? "Owner account selected."
-      : account.type === "user"
-        ? "Guest access selected."
-        : "Personal account selected.";
-
-  $("demoNotice").textContent =
-    "The real A.L.E.X assistant and server-side account system have not been connected yet.";
-
-  showScreen("welcomeScreen");
-}
-
-$("pinForm").addEventListener("submit", event => {
-  event.preventDefault();
-  if (!selectedAccount) return;
-
-  const pin = $("pinInput").value;
-  const valid = selectedAccount.type === "owner"
-    ? pin === OWNER_PIN
-    : selectedAccount.type === "member" && pin === selectedAccount.pin;
-
-  if (!valid) {
-    setMessage("pinMessage", "Incorrect PIN. Try again.", true);
-    $("pinInput").select();
-    return;
-  }
-
-  enterAccount(selectedAccount);
-});
-
-$("gateForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  if ($("gateInput").value !== CREATION_CODE) {
-    setMessage("gateMessage", "Invalid creation code.", true);
-    $("gateInput").select();
-    return;
-  }
-
-  $("registerForm").reset();
-  showScreen("registerScreen");
-  $("usernameInput").focus();
-});
-
-$("registerForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  const name = $("usernameInput").value.trim();
-  const pin = $("newPinInput").value;
-  const confirmation = $("confirmPinInput").value;
-
-  if (name.length < 2) {
-    setMessage("registerMessage", "Username must have at least 2 characters.", true);
-    return;
-  }
-
-  if (/^(billy|user)$/i.test(name)) {
-    setMessage("registerMessage", "That username is reserved.", true);
-    return;
-  }
-
-  if (accounts.some(a => a.name.toLowerCase() === name.toLowerCase())) {
-    setMessage("registerMessage", "That username already exists.", true);
-    return;
-  }
-
-  if (!/^[0-9]{4,6}$/.test(pin)) {
-    setMessage("registerMessage", "PIN must contain 4–6 digits.", true);
-    return;
-  }
-
-  if (pin !== confirmation) {
-    setMessage("registerMessage", "The PINs do not match.", true);
-    return;
-  }
-
-  const account = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-    name,
-    pin,
-    type: "member"
-  };
-
-  accounts.push(account);
-
-  if (!saveAccounts()) {
-    accounts.pop();
-    setMessage("registerMessage", "Browser storage is unavailable.", true);
-    return;
-  }
-
-  renderAccounts();
-  enterAccount(account);
-});
-
-document.querySelectorAll("[data-back]").forEach(button => {
-  button.addEventListener("click", () => {
-    selectedAccount = null;
-    showScreen("home");
-  });
-});
-
-$("signOut").addEventListener("click", () => {
-  selectedAccount = null;
-  $("pinInput").value = "";
-  renderAccounts();
-  showScreen("home");
-});
-
-$("continueButton").addEventListener("click", () => {
-  setMessage("demoNotice", "The AI chat interface will be added in the next stage.");
-});
-
-renderAccounts();
-showScreen("home");
-</script>
+    addAccount("Billy", "OWNER", "owner");
+    accounts.forEach(name => addAccount(name, "PERSONAL ACCOUNT", "guest"));
+    addAccount("User", "GUEST ACCESS", "user");
+    addAccount("+ Add new account", "REGISTER", "add");
+  </script>
 </body>
 </html>
