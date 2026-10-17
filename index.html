@@ -12,26 +12,30 @@
 }
 *{box-sizing:border-box}
 body{
-  margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 15%,#102b4a,var(--bg) 65%);
+  margin:0;min-height:100vh;
+  background:radial-gradient(ellipse at 50% 15%,#102b4a,var(--bg) 65%);
   color:#eaf9ff;font-family:"Segoe UI",Arial,sans-serif
 }
-button,input{font:inherit}
+button,input,select{font:inherit}
 button{
   color:var(--bright);background:#00c8ff0d;border:1px solid var(--border);
-  border-radius:11px;padding:13px 15px;cursor:pointer;transition:.18s
+  border-radius:11px;padding:11px 13px;cursor:pointer;transition:.18s
 }
 button:hover{background:#00c8ff20;border-color:var(--blue)}
 button:disabled{opacity:.5;cursor:wait}
-input{
-  width:100%;padding:14px;color:white;background:#040c19;
+input,select{
+  width:100%;padding:13px;color:white;background:#040c19;
   border:1px solid var(--border);border-radius:10px;outline:none
 }
-input:focus{border-color:var(--blue)}
+select option{background:#071426;color:white}
+input:focus,select:focus{border-color:var(--blue)}
 header{
-  height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--border);background:#030916bb
+  min-height:64px;padding:0 20px;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--border);
+  background:#030916bb
 }
-.brand{font-weight:700;letter-spacing:.2em}.brand span,h1 span{color:var(--blue)}
+.brand{font-weight:700;letter-spacing:.2em}
+.brand span,h1 span{color:var(--blue)}
 #screen{min-height:calc(100vh - 64px)}
 .center{width:min(100% - 30px,520px);margin:auto;padding:35px 0}
 .intro{text-align:center}
@@ -53,29 +57,52 @@ header{
 @keyframes pulse{50%{box-shadow:0 0 40px #00bfff88,inset 0 0 35px #00bfff66}}
 h1{font-size:clamp(1.8rem,5vw,2.5rem);margin:10px 0}
 .card{
-  margin-top:26px;padding:20px;border:1px solid var(--border);border-radius:17px;
-  background:linear-gradient(145deg,#0c1c32ed,#071020ed)
+  margin-top:26px;padding:20px;border:1px solid var(--border);
+  border-radius:17px;background:linear-gradient(145deg,#0c1c32ed,#071020ed)
 }
 .account-list,.stack{display:grid;gap:11px;margin-top:17px}
 .account{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left}
-.account strong{display:block;color:#effaff}.account small{display:block;color:var(--muted);margin-top:4px}
+.account strong{display:block;color:#effaff}
+.account small{display:block;color:var(--muted);margin-top:4px}
 .account .arrow{color:var(--blue);font-size:1.3rem}
 .user-account{border-style:dashed}
 .stack button{width:100%}
 .notice{min-height:20px;margin-top:12px;color:var(--bright);font-size:.88rem;overflow-wrap:anywhere}
 footer{text-align:center;color:#526b88;font-size:.75rem;padding:20px}
-#hud{height:calc(100dvh - 64px);min-height:450px;display:grid;grid-template-columns:235px minmax(0,1fr)}
-.sidebar{padding:20px 14px;border-right:1px solid var(--border);background:#040c19cc;overflow-y:auto}
+#hud{
+  height:calc(100dvh - 64px);min-height:450px;
+  display:grid;grid-template-columns:235px minmax(0,1fr)
+}
+.sidebar{
+  padding:20px 14px;border-right:1px solid var(--border);
+  background:#040c19cc;overflow-y:auto
+}
 .sidebar button{display:block;width:100%;text-align:left;margin-top:10px}
 .main-chat{min-width:0;display:flex;flex-direction:column}
-.hud-top{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hud-top{
+  padding:13px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
+}
 .status{font-size:.78rem;color:var(--blue)}
-.messages{flex:1;overflow-y:auto;padding:22px clamp(12px,4vw,40px);display:flex;flex-direction:column;gap:14px}
-.message{max-width:min(780px,95%);padding:14px 16px;border:1px solid var(--border);border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+.messages{
+  flex:1;overflow-y:auto;padding:22px clamp(12px,4vw,40px);
+  display:flex;flex-direction:column;gap:14px
+}
+.message{
+  max-width:min(780px,95%);padding:14px 16px;border:1px solid var(--border);
+  border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6
+}
 .message.ai{align-self:flex-start;background:#0b1b30}
 .message.me{align-self:flex-end;background:#06334b;border-color:#008dc0}
-.composer{display:flex;gap:9px;padding:13px clamp(10px,3vw,25px) max(13px,env(safe-area-inset-bottom));border-top:1px solid var(--border)}
-.composer input{min-width:0;flex:1}.composer button{min-width:75px}
+.composer{
+  display:flex;gap:9px;padding:13px clamp(10px,3vw,25px)
+  max(13px,env(safe-area-inset-bottom));border-top:1px solid var(--border)
+}
+.composer input{min-width:0;flex:1}
+.composer button{min-width:75px}
+.voice-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.voice-controls select{width:auto;max-width:190px;padding:9px;font-size:.8rem}
+.voice-controls button{padding:9px 11px;font-size:.8rem}
 .mobile-only{display:none}
 @media(max-width:700px){
   header{padding:0 13px}
@@ -84,6 +111,10 @@ footer{text-align:center;color:#526b88;font-size:.75rem;padding:20px}
   .mobile-only{display:inline-block}
   .hud-top{padding:12px}
   .messages{padding:15px 10px}
+  .voice-controls{width:100%}
+  .voice-controls select{flex:1;min-width:0;max-width:none}
+  .composer{gap:6px}
+  .composer button{min-width:60px;padding:10px}
 }
 @media(max-height:600px) and (orientation:landscape){
   .center{padding-top:15px}
@@ -103,9 +134,9 @@ footer{text-align:center;color:#526b88;font-size:.75rem;padding:20px}
 
 /* ===== CONFIGURATION ===== */
 
-// Enter your Gemini key AFTER signing in, using API Settings.
-// Do not paste your key into this file.
-let GEMINI_API_KEY = "";
+// Optional: paste your Gemini key between the quotation marks.
+// WARNING: A key in a public GitHub repository is visible to everyone.
+let GEMINI_API_KEY = "AQ.Ab8RN6Keag5PWUIcd_KmdPxXx4TDLzgz7tiI2FhzvCs5W_0bQw";
 const GEMINI_MODEL = "gemini-3.8-flash";
 
 const OWNER = {name:"Billy", pin:"112411"};
@@ -116,7 +147,14 @@ let accounts = loadAccounts();
 let activeAccount = null;
 let chatHistory = [];
 let busy = false;
-let settingsReturnTo = "hud";
+let speechEnabled = true;
+let availableVoices = [];
+let selectedVoiceURI = "";
+let speechGeneration = 0;
+
+const SPEECH_PREF_KEY = "howardAlexSpeechPrefsV1";
+
+/* ===== ACCOUNT STORAGE ===== */
 
 function loadAccounts(){
   try{
@@ -131,17 +169,38 @@ function loadAccounts(){
   }catch(e){}
   return [];
 }
+
 function saveAccounts(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(accounts));
 }
+
+function loadSpeechPrefs(){
+  try{
+    const p=JSON.parse(localStorage.getItem(SPEECH_PREF_KEY)||"{}");
+    speechEnabled=p.enabled!==false;
+    selectedVoiceURI=typeof p.voice==="string"?p.voice:"";
+  }catch(e){}
+}
+
+function saveSpeechPrefs(){
+  try{
+    localStorage.setItem(SPEECH_PREF_KEY,JSON.stringify({
+      enabled:speechEnabled,
+      voice:selectedVoiceURI
+    }));
+  }catch(e){}
+}
+
 function escapeHTML(s){
   return String(s).replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[c]);
 }
+
 function setHeader(s){
   document.getElementById("header-status").textContent=s;
 }
+
 function intro(){
   return `<div class="intro">
     <div class="orb"><span>A.L.E.X</span></div>
@@ -151,10 +210,168 @@ function intro(){
   </div>`;
 }
 
+/* ===== VOICE ENGINE ===== */
+
+function getSpeechEngine(){
+  return "speechSynthesis" in window &&
+         "SpeechSynthesisUtterance" in window;
+}
+
+function refreshVoices(){
+  if(!getSpeechEngine())return;
+  availableVoices=window.speechSynthesis.getVoices()||[];
+  updateVoiceSelectors();
+}
+
+function preferredVoice(){
+  let voice=availableVoices.find(v=>v.voiceURI===selectedVoiceURI);
+  if(voice)return voice;
+
+  // Prefer British English voices, then other English voices.
+  voice=availableVoices.find(v=>/^en-GB/i.test(v.lang)&&/female|serena|kate|hazel|susan|libby|sonia|female/i.test(v.name));
+  if(voice)return voice;
+
+  voice=availableVoices.find(v=>/^en-GB/i.test(v.lang));
+  if(voice)return voice;
+
+  voice=availableVoices.find(v=>/^en/i.test(v.lang));
+  return voice||availableVoices[0]||null;
+}
+
+function updateVoiceSelectors(){
+  const selector=document.getElementById("voice-select");
+  if(!selector)return;
+
+  if(!getSpeechEngine()){
+    selector.innerHTML='<option value="">Speech unavailable</option>';
+    selector.disabled=true;
+    return;
+  }
+
+  const oldValue=selectedVoiceURI;
+  selector.innerHTML="";
+
+  if(!availableVoices.length){
+    selector.innerHTML='<option value="">Loading device voices…</option>';
+    return;
+  }
+
+  availableVoices.forEach(v=>{
+    const option=document.createElement("option");
+    option.value=v.voiceURI;
+    option.textContent=`${v.name} (${v.lang})`;
+    selector.appendChild(option);
+  });
+
+  const best=preferredVoice();
+  const chosen=availableVoices.find(v=>v.voiceURI===oldValue)||best;
+  if(chosen){
+    selector.value=chosen.voiceURI;
+    selectedVoiceURI=chosen.voiceURI;
+  }
+}
+
+function stopSpeaking(){
+  speechGeneration++;
+  if(getSpeechEngine())window.speechSynthesis.cancel();
+}
+
+function speakText(text){
+  if(!speechEnabled||!getSpeechEngine()||!text)return;
+
+  stopSpeaking();
+  const generation=speechGeneration;
+  const utterance=new SpeechSynthesisUtterance(String(text));
+  const voice=preferredVoice();
+
+  if(voice){
+    utterance.voice=voice;
+    utterance.lang=voice.lang||"en-GB";
+  }else{
+    utterance.lang="en-GB";
+  }
+
+  // Measured delivery; tune these after testing on your devices.
+  utterance.rate=0.94;
+  utterance.pitch=0.96;
+  utterance.volume=1;
+
+  utterance.onstart=()=>{
+    if(generation!==speechGeneration)return;
+    const status=document.getElementById("voice-status");
+    if(status)status.textContent="SPEAKING";
+  };
+  utterance.onend=()=>{
+    if(generation!==speechGeneration)return;
+    const status=document.getElementById("voice-status");
+    if(status)status.textContent=speechEnabled?"VOICE ON":"VOICE OFF";
+  };
+  utterance.onerror=()=>{
+    if(generation!==speechGeneration)return;
+    const status=document.getElementById("voice-status");
+    if(status)status.textContent="VOICE READY";
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function toggleSpeech(){
+  speechEnabled=!speechEnabled;
+  if(!speechEnabled)stopSpeaking();
+  saveSpeechPrefs();
+  updateVoiceControls();
+}
+
+function updateVoiceControls(){
+  const toggle=document.getElementById("voice-toggle");
+  const status=document.getElementById("voice-status");
+  if(toggle)toggle.textContent=speechEnabled?"Voice: ON":"Voice: OFF";
+  if(status)status.textContent=speechEnabled?"VOICE ON":"VOICE OFF";
+}
+
+function buildVoiceControls(){
+  return `<div class="voice-controls">
+    <select id="voice-select" aria-label="Choose A.L.E.X voice">
+      <option value="">Loading voices…</option>
+    </select>
+    <button type="button" id="voice-toggle">Voice: ON</button>
+    <button type="button" id="stop-speaking">Stop</button>
+  </div>`;
+}
+
+function attachVoiceControls(){
+  const selector=document.getElementById("voice-select");
+  const toggle=document.getElementById("voice-toggle");
+  const stop=document.getElementById("stop-speaking");
+
+  if(selector){
+    selector.onchange=()=>{
+      selectedVoiceURI=selector.value;
+      saveSpeechPrefs();
+      stopSpeaking();
+    };
+  }
+  if(toggle)toggle.onclick=toggleSpeech;
+  if(stop)stop.onclick=()=>{
+    stopSpeaking();
+    const status=document.getElementById("voice-status");
+    if(status)status.textContent="STOPPED";
+  };
+
+  refreshVoices();
+  updateVoiceControls();
+
+  // Some browsers load their voice list asynchronously.
+  if(getSpeechEngine()){
+    window.speechSynthesis.onvoiceschanged=refreshVoices;
+  }
+}
+
 /* ===== ACCOUNT SELECTION ===== */
 
 function showAccounts(){
   activeAccount=null;
+  stopSpeaking();
   setHeader("A.L.E.X SYSTEM");
 
   const personal=accounts.map((a,i)=>`
@@ -212,6 +429,7 @@ function showLogin(name,pin,isOwner){
         <div id="login-notice" class="notice"></div>
       </section>
     </main>`;
+
   document.getElementById("back").onclick=showAccounts;
   document.getElementById("login-form").onsubmit=e=>{
     e.preventDefault();
@@ -286,6 +504,7 @@ function enterHUD(name,isOwner){
           <div class="eyebrow">System status</div>
           <p class="muted">Interface: <span style="color:var(--blue)">ONLINE</span></p>
           <p class="muted">Gemini: <span id="sidebar-ai">NOT CONNECTED</span></p>
+          <p class="muted">Voice: <span id="voice-status">VOICE ON</span></p>
         </div>
       </aside>
       <section class="main-chat">
@@ -295,6 +514,7 @@ function enterHUD(name,isOwner){
           </div>
           <button class="mobile-only" id="mobile-settings">API Settings</button>
           <button class="mobile-only" id="mobile-out">Sign out</button>
+          ${buildVoiceControls()}
           <div class="status" id="ai-status">STANDBY</div>
         </div>
         <div class="messages" id="messages">
@@ -314,11 +534,18 @@ function enterHUD(name,isOwner){
 
   document.getElementById("new-chat").onclick=()=>{
     chatHistory=[];
+    stopSpeaking();
     document.getElementById("messages").innerHTML=
       '<div class="message ai">New conversation initiated. How can I help?</div>';
     document.getElementById("subtitle").textContent="New conversation";
+    speakText("New conversation initiated. How can I help?");
   };
+
   document.getElementById("chat-form").onsubmit=sendMessage;
+  attachVoiceControls();
+
+  // Speak the greeting after the user has signed in.
+  speakText(`Hello, ${name}. I'm A.L.E.X. What are we working on?`);
 }
 
 function addMessage(text,who){
@@ -330,6 +557,7 @@ function addMessage(text,who){
   messages.scrollTop=messages.scrollHeight;
   return node;
 }
+
 function setAIStatus(s){
   const a=document.getElementById("ai-status");
   const b=document.getElementById("sidebar-ai");
@@ -341,23 +569,24 @@ function setAIStatus(s){
 
 function showAPISettings(){
   if(!activeAccount)return;
-  settingsReturnTo="hud";
+  stopSpeaking();
+
   document.getElementById("screen").innerHTML=`
     <main class="center">
       ${intro()}
       <section class="card">
         <div class="eyebrow">System configuration</div>
         <h2>Gemini API Settings</h2>
-        <p class="muted">Enter your Google Gemini API key. It stays in this page's memory and is not saved to browser storage.</p>
+        <p class="muted">You can enter a key here for this page session. For a code-configured key, set GEMINI_API_KEY near the top of the script.</p>
         <form id="api-form" class="stack">
           <input id="api-key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste Gemini API key">
-          <button type="submit">Save key in memory</button>
+          <button type="submit">Use key for this session</button>
           <button type="button" id="test-api">Test connection</button>
-          <button type="button" id="clear-api">Clear API key</button>
+          <button type="button" id="clear-api">Clear session key</button>
           <button type="button" id="back-hud">Return to A.L.E.X</button>
         </form>
         <div id="api-notice" class="notice"></div>
-        <p class="muted">Refreshing or closing this page clears the key. The key is sent to Google's API when you chat.</p>
+        <p class="muted">A key entered here is held in page memory and is cleared on refresh. A key placed in this public file is visible to anyone who can read the source.</p>
       </section>
     </main>`;
 
@@ -370,14 +599,17 @@ function showAPISettings(){
     if(!key){notice.textContent="Enter your API key first.";return;}
     GEMINI_API_KEY=key;
     input.value="";
-    notice.textContent="API key saved in page memory.";
+    notice.textContent="API key is ready for this session.";
   };
 
   document.getElementById("test-api").onclick=async()=>{
     const entered=input.value.trim();
     if(entered)GEMINI_API_KEY=entered;
     input.value="";
-    if(!GEMINI_API_KEY){notice.textContent="Enter an API key first.";return;}
+    if(!GEMINI_API_KEY){
+      notice.textContent="Add your key near the top of the code or enter it above.";
+      return;
+    }
 
     const btn=document.getElementById("test-api");
     btn.disabled=true;
@@ -400,7 +632,7 @@ function showAPISettings(){
   document.getElementById("clear-api").onclick=()=>{
     GEMINI_API_KEY="";
     input.value="";
-    notice.textContent="API key cleared from memory.";
+    notice.textContent="Session key cleared. A code-configured key must be removed from the source manually.";
   };
 
   document.getElementById("back-hud").onclick=()=>{
@@ -412,7 +644,10 @@ function showAPISettings(){
 /* ===== GEMINI ===== */
 
 async function geminiRequest(contents,maxOutputTokens=1200){
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+  const key=GEMINI_API_KEY.trim();
+  if(!key)throw new Error("No API key configured.");
+
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
   const response=await fetch(url,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
@@ -424,6 +659,7 @@ async function geminiRequest(contents,maxOutputTokens=1200){
       generationConfig:{temperature:0.8,maxOutputTokens}
     })
   });
+
   const data=await response.json();
   if(!response.ok)throw new Error(data?.error?.message||`HTTP ${response.status}`);
   return data;
@@ -432,12 +668,13 @@ async function geminiRequest(contents,maxOutputTokens=1200){
 async function sendMessage(event){
   event.preventDefault();
   if(busy)return;
+
   const input=document.getElementById("chat-input");
   const prompt=input.value.trim();
   if(!prompt)return;
 
-  if(!GEMINI_API_KEY){
-    addMessage("Gemini isn't connected yet. Open API Settings and enter your API key.","ai");
+  if(!GEMINI_API_KEY.trim()){
+    addMessage("Gemini isn't connected yet. Add your API key near the top of the code or open API Settings.","ai");
     return;
   }
 
@@ -454,9 +691,11 @@ async function sendMessage(event){
     const answer=(data.candidates?.[0]?.content?.parts||[])
       .map(p=>p.text||"").join("").trim();
     if(!answer)throw new Error("Gemini returned no text. Try again.");
+
     chatHistory.push({role:"model",parts:[{text:answer}]});
     addMessage(answer,"ai");
     setAIStatus("ONLINE");
+    speakText(answer);
   }catch(err){
     chatHistory.pop();
     addMessage("Connection error: "+err.message,"ai");
@@ -468,6 +707,15 @@ async function sendMessage(event){
     if(send)send.disabled=false;
     if(field){field.disabled=false;field.focus();}
   }
+}
+
+/* ===== STARTUP ===== */
+
+loadSpeechPrefs();
+
+if(getSpeechEngine()){
+  refreshVoices();
+  window.speechSynthesis.onvoiceschanged=refreshVoices;
 }
 
 showAccounts();
