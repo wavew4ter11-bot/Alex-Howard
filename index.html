@@ -95,11 +95,14 @@ footer{text-align:center;color:#526b88;font-size:.75rem;padding:20px}
 .message.ai{align-self:flex-start;background:#0b1b30}
 .message.me{align-self:flex-end;background:#06334b;border-color:#008dc0}
 .composer{
-  display:flex;gap:9px;padding:13px clamp(10px,3vw,25px)
-  max(13px,env(safe-area-inset-bottom));border-top:1px solid var(--border)
+  display:flex;gap:9px;padding:13px clamp(10px,3vw,25px) max(13px,env(safe-area-inset-bottom));border-top:1px solid var(--border)
 }
 .composer input{min-width:0;flex:1}
 .composer button{min-width:75px}
+#mic-toggle{min-width:52px;padding:10px 12px}
+#mic-toggle.listening{background:#00c8ff30;border-color:var(--blue);box-shadow:0 0 16px #00c8ff55}
+#mic-toggle:disabled{opacity:.45}
+.voice-hint{font-size:.75rem;color:var(--muted);padding:0 16px 8px}
 .voice-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .voice-controls select{width:auto;max-width:190px;padding:9px;font-size:.8rem}
 .voice-controls button{padding:9px 11px;font-size:.8rem}
@@ -151,6 +154,11 @@ let speechEnabled = true;
 let availableVoices = [];
 let selectedVoiceURI = "";
 let speechGeneration = 0;
+let voiceMode = false;
+let recognition = null;
+let recognitionSupported = false;
+let alexSpeaking = false;
+let restartRecognitionTimer = null;
 
 const SPEECH_PREF_KEY = "howardAlexSpeechPrefsV1";
 
@@ -273,12 +281,18 @@ function updateVoiceSelectors(){
 
 function stopSpeaking(){
   speechGeneration++;
+  alexSpeaking=false;
   if(getSpeechEngine())window.speechSynthesis.cancel();
 }
 
 function speakText(text){
-  if(!speechEnabled||!getSpeechEngine()||!text)return;
+  if(!speechEnabled||!getSpeechEngine()||!text){
+    alexSpeaking=false;
+    if(voiceMode)queueListeningRestart();
+    return;
+  }
 
+  stopListening();
   stopSpeaking();
   const generation=speechGeneration;
   const utterance=new SpeechSynthesisUtterance(String(text));
@@ -291,27 +305,32 @@ function speakText(text){
     utterance.lang="en-GB";
   }
 
-  // Measured delivery; tune these after testing on your devices.
   utterance.rate=0.94;
   utterance.pitch=0.96;
   utterance.volume=1;
 
   utterance.onstart=()=>{
     if(generation!==speechGeneration)return;
+    alexSpeaking=true;
     const status=document.getElementById("voice-status");
     if(status)status.textContent="SPEAKING";
   };
   utterance.onend=()=>{
     if(generation!==speechGeneration)return;
+    alexSpeaking=false;
     const status=document.getElementById("voice-status");
-    if(status)status.textContent=speechEnabled?"VOICE ON":"VOICE OFF";
+    if(status)status.textContent=voiceMode?"LISTENING FOR YOU":(speechEnabled?"VOICE ON":"VOICE OFF");
+    if(voiceMode)queueListeningRestart();
   };
   utterance.onerror=()=>{
     if(generation!==speechGeneration)return;
+    alexSpeaking=false;
     const status=document.getElementById("voice-status");
-    if(status)status.textContent="VOICE READY";
+    if(status)status.textContent=voiceMode?"RESTARTING LISTENING":"VOICE READY";
+    if(voiceMode)queueListeningRestart();
   };
 
+  alexSpeaking=true;
   window.speechSynthesis.speak(utterance);
 }
 
@@ -355,7 +374,8 @@ function attachVoiceControls(){
   if(stop)stop.onclick=()=>{
     stopSpeaking();
     const status=document.getElementById("voice-status");
-    if(status)status.textContent="STOPPED";
+    if(status)status.textContent=voiceMode?"LISTENING FOR YOU":"STOPPED";
+    if(voiceMode)queueListeningRestart();
   };
 
   refreshVoices();
@@ -367,9 +387,109 @@ function attachVoiceControls(){
   }
 }
 
+/* ===== CONTINUOUS VOICE CONVERSATION ===== */
+
+function getRecognitionConstructor(){
+  return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+}
+
+function initRecognition(){
+  const Recognition=getRecognitionConstructor();
+  recognitionSupported=!!Recognition;
+  if(!Recognition)return;
+  recognition=new Recognition();
+  recognition.lang="en-GB";
+  recognition.continuous=true;
+  recognition.interimResults=false;
+  recognition.maxAlternatives=1;
+
+  recognition.onresult=(event)=>{
+    let transcript="";
+    for(let i=event.resultIndex;i<event.results.length;i++){
+      if(event.results[i].isFinal)transcript+=event.results[i][0].transcript+" ";
+    }
+    transcript=transcript.trim();
+    if(transcript && voiceMode && !busy && !alexSpeaking){
+      stopListening();
+      const field=document.getElementById("chat-input");
+      if(field)field.value=transcript;
+      sendMessage(null,transcript);
+    }
+  };
+  recognition.onerror=(event)=>{
+    const status=document.getElementById("voice-status");
+    if(event.error==="not-allowed" || event.error==="service-not-allowed"){
+      voiceMode=false;
+      updateMicButton("Microphone permission denied");
+      return;
+    }
+    if(status && voiceMode)status.textContent="VOICE RECONNECTING";
+  };
+  recognition.onend=()=>{
+    if(voiceMode && !busy && !alexSpeaking)queueListeningRestart();
+  };
+}
+
+function startListening(){
+  if(!voiceMode || !recognition || busy || alexSpeaking)return;
+  try{
+    recognition.start();
+    updateMicButton("Listening — tap mic to stop");
+  }catch(err){
+    // The browser may still be shutting down its previous recognition session.
+    queueListeningRestart();
+  }
+}
+
+function stopListening(){
+  if(restartRecognitionTimer){clearTimeout(restartRecognitionTimer);restartRecognitionTimer=null;}
+  if(recognition){
+    try{recognition.stop();}catch(err){}
+  }
+}
+
+function queueListeningRestart(){
+  if(!voiceMode)return;
+  if(restartRecognitionTimer)clearTimeout(restartRecognitionTimer);
+  restartRecognitionTimer=setTimeout(()=>{
+    restartRecognitionTimer=null;
+    startListening();
+  },450);
+}
+
+function updateMicButton(message){
+  const button=document.getElementById("mic-toggle");
+  const status=document.getElementById("voice-status");
+  if(button){
+    button.classList.toggle("listening",voiceMode);
+    button.textContent=voiceMode?"Mic: ON":"Mic";
+    button.setAttribute("aria-pressed",String(voiceMode));
+    button.title=voiceMode?"Listening is enabled. Tap to stop.":"Start continuous voice conversation";
+  }
+  if(status)status.textContent=message || (voiceMode?(alexSpeaking?"SPEAKING":"LISTENING FOR YOU"):(speechEnabled?"VOICE ON":"VOICE OFF"));
+}
+
+function toggleVoiceMode(){
+  if(!recognitionSupported || !recognition){
+    updateMicButton("Speech recognition isn't supported in this browser. Try Chrome or Edge on desktop.");
+    return;
+  }
+  voiceMode=!voiceMode;
+  if(voiceMode){
+    // This click is the user gesture required by browsers to request microphone access.
+    updateMicButton("Requesting microphone…");
+    startListening();
+  }else{
+    stopListening();
+    updateMicButton("Voice conversation stopped");
+  }
+}
+
 /* ===== ACCOUNT SELECTION ===== */
 
 function showAccounts(){
+  voiceMode=false;
+  stopListening();
   activeAccount=null;
   stopSpeaking();
   setHeader("A.L.E.X SYSTEM");
@@ -498,7 +618,6 @@ function enterHUD(name,isOwner){
         <div class="eyebrow">Howard Core</div><h2>A.L.E.X</h2>
         <p class="muted">Signed in as<br><strong>${escapeHTML(name)}</strong></p>
         <button id="new-chat">＋ New conversation</button>
-        <button id="api-settings">⚙ API Settings</button>
         <button id="sign-out">Sign out</button>
         <div style="margin-top:30px">
           <div class="eyebrow">System status</div>
@@ -512,7 +631,6 @@ function enterHUD(name,isOwner){
           <div><strong>Personal Intelligence</strong>
             <div class="muted" id="subtitle">Ready when you are.</div>
           </div>
-          <button class="mobile-only" id="mobile-settings">API Settings</button>
           <button class="mobile-only" id="mobile-out">Sign out</button>
           ${buildVoiceControls()}
           <div class="status" id="ai-status">STANDBY</div>
@@ -522,15 +640,15 @@ function enterHUD(name,isOwner){
         </div>
         <form class="composer" id="chat-form">
           <input id="chat-input" placeholder="Message A.L.E.X..." autocomplete="off" required>
+          <button type="button" id="mic-toggle" aria-label="Start continuous voice conversation" aria-pressed="false">Mic</button>
           <button id="send-button" type="submit">Send</button>
         </form>
+        <div class="voice-hint" id="voice-hint">Tap Mic once for continuous conversation. Tap again to stop.</div>
       </section>
     </main>`;
 
   document.getElementById("sign-out").onclick=showAccounts;
   document.getElementById("mobile-out").onclick=showAccounts;
-  document.getElementById("api-settings").onclick=showAPISettings;
-  document.getElementById("mobile-settings").onclick=showAPISettings;
 
   document.getElementById("new-chat").onclick=()=>{
     chatHistory=[];
@@ -542,6 +660,15 @@ function enterHUD(name,isOwner){
   };
 
   document.getElementById("chat-form").onsubmit=sendMessage;
+  const mic=document.getElementById("mic-toggle");
+  if(mic)mic.onclick=toggleVoiceMode;
+  initRecognition();
+  if(!recognitionSupported){
+    const hint=document.getElementById("voice-hint");
+    if(hint)hint.textContent="Voice input may not be supported by this browser. Try Chrome or Edge on desktop; Safari support varies.";
+    const button=document.getElementById("mic-toggle");
+    if(button)button.title="Speech recognition is not supported in this browser";
+  }
   attachVoiceControls();
 
   // Speak the greeting after the user has signed in.
@@ -563,82 +690,6 @@ function setAIStatus(s){
   const b=document.getElementById("sidebar-ai");
   if(a)a.textContent=s;
   if(b)b.textContent=s;
-}
-
-/* ===== API SETTINGS ===== */
-
-function showAPISettings(){
-  if(!activeAccount)return;
-  stopSpeaking();
-
-  document.getElementById("screen").innerHTML=`
-    <main class="center">
-      ${intro()}
-      <section class="card">
-        <div class="eyebrow">System configuration</div>
-        <h2>Gemini API Settings</h2>
-        <p class="muted">You can enter a key here for this page session. For a code-configured key, set GEMINI_API_KEY near the top of the script.</p>
-        <form id="api-form" class="stack">
-          <input id="api-key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste Gemini API key">
-          <button type="submit">Use key for this session</button>
-          <button type="button" id="test-api">Test connection</button>
-          <button type="button" id="clear-api">Clear session key</button>
-          <button type="button" id="back-hud">Return to A.L.E.X</button>
-        </form>
-        <div id="api-notice" class="notice"></div>
-        <p class="muted">A key entered here is held in page memory and is cleared on refresh. A key placed in this public file is visible to anyone who can read the source.</p>
-      </section>
-    </main>`;
-
-  const input=document.getElementById("api-key-input");
-  const notice=document.getElementById("api-notice");
-
-  document.getElementById("api-form").onsubmit=e=>{
-    e.preventDefault();
-    const key=input.value.trim();
-    if(!key){notice.textContent="Enter your API key first.";return;}
-    GEMINI_API_KEY=key;
-    input.value="";
-    notice.textContent="API key is ready for this session.";
-  };
-
-  document.getElementById("test-api").onclick=async()=>{
-    const entered=input.value.trim();
-    if(entered)GEMINI_API_KEY=entered;
-    input.value="";
-    if(!GEMINI_API_KEY){
-      notice.textContent="Add your key near the top of the code or enter it above.";
-      return;
-    }
-
-    const btn=document.getElementById("test-api");
-    btn.disabled=true;
-    notice.textContent="Testing connection...";
-    try{
-      const data=await geminiRequest([{
-        role:"user",parts:[{text:"Reply with exactly: A.L.E.X connection successful."}]
-      }],40);
-      const answer=(data.candidates?.[0]?.content?.parts||[])
-        .map(p=>p.text||"").join("").trim();
-      if(!answer)throw new Error("Gemini returned no text.");
-      notice.textContent="Connected successfully. Gemini is responding.";
-    }catch(err){
-      notice.textContent="Connection failed: "+err.message;
-    }finally{
-      btn.disabled=false;
-    }
-  };
-
-  document.getElementById("clear-api").onclick=()=>{
-    GEMINI_API_KEY="";
-    input.value="";
-    notice.textContent="Session key cleared. A code-configured key must be removed from the source manually.";
-  };
-
-  document.getElementById("back-hud").onclick=()=>{
-    if(activeAccount)enterHUD(activeAccount.name,activeAccount.isOwner);
-    else showAccounts();
-  };
 }
 
 /* ===== GEMINI ===== */
@@ -665,19 +716,20 @@ async function geminiRequest(contents,maxOutputTokens=1200){
   return data;
 }
 
-async function sendMessage(event){
-  event.preventDefault();
+async function sendMessage(event, overridePrompt){
+  if(event)event.preventDefault();
   if(busy)return;
 
   const input=document.getElementById("chat-input");
-  const prompt=input.value.trim();
+  const prompt=(typeof overridePrompt==="string"?overridePrompt:input.value).trim();
   if(!prompt)return;
 
   if(!GEMINI_API_KEY.trim()){
-    addMessage("Gemini isn't connected yet. Add your API key near the top of the code or open API Settings.","ai");
+    addMessage("Gemini isn't connected yet. Check the API key configured in alexindex.html.","ai");
     return;
   }
 
+  if(voiceMode)stopListening();
   input.value="";
   addMessage(prompt,"me");
   chatHistory.push({role:"user",parts:[{text:prompt}]});
@@ -705,7 +757,8 @@ async function sendMessage(event){
     const send=document.getElementById("send-button");
     const field=document.getElementById("chat-input");
     if(send)send.disabled=false;
-    if(field){field.disabled=false;field.focus();}
+    if(field){field.disabled=false;if(!voiceMode)field.focus();}
+    if(voiceMode && !alexSpeaking)queueListeningRestart();
   }
 }
 
